@@ -29,6 +29,10 @@ export const WrapperWallet = styled.div`
   gap: 45px;
 `;
 
+export const Wallet = styled.span`
+  color: #1f2041;
+`;
+
 export const Adress = styled.span`
   color: rgba(31, 32, 65, 0.75);
 `;

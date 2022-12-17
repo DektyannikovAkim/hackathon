@@ -68,3 +68,10 @@ export const ModalBackground = styled.div`
   background: rgba(46, 46, 46, 0.13);
   backdrop-filter: blur(5px);
 `;
+
+export const InfoString = styled.span`
+  font-weight: 400;
+  font-size: 14px;
+
+  color: rgba(31, 32, 65, 0.75);
+`;

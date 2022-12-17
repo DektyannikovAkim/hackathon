@@ -1,7 +1,7 @@
 import React from "react";
 import * as styles from "./style";
 
-interface Props {
+export interface ModalProps {
   label: string;
   children: JSX.Element | JSX.Element[];
   show: boolean;
@@ -15,7 +15,7 @@ export const ModalPanel = ({
   show,
   close,
   ...props
-}: Props) => {
+}: ModalProps) => {
   return (
     <>
       {show ? (

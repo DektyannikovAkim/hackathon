@@ -9,11 +9,16 @@ export interface Match {
 }
 
 export interface BetInfo {
-  matchId: number;
+  matchId: string;
   result: Result;
   rate: number;
   amount: number;
   claimed: boolean;
 }
 
-type Result = "WIN" | "LOSE" | "TIE";
+enum Result {
+  NULL,
+  WIN,
+  LOSE,
+  TIE,
+}

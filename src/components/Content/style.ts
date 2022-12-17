@@ -4,7 +4,7 @@ export const Container = styled.div`
   min-height: 0;
 
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   overflow: auto;
 

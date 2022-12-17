@@ -1,10 +1,15 @@
 import React from "react";
+import { BetInfo } from "../../../modules";
 import * as styles from "./style";
 
 interface MatchProps {
-  matchName: number;
+  data: BetInfo;
 }
 
-export const MatchItem = ({ matchName }: MatchProps) => {
-  return <styles.Container>Match № {matchName}</styles.Container>;
+export const MatchItem = ({ data }: MatchProps) => {
+  return (
+    <styles.Container status={data.result}>
+      Match: {data.matchId}
+    </styles.Container>
+  );
 };

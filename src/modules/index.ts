@@ -16,7 +16,7 @@ export interface BetInfo {
   claimed: boolean;
 }
 
-enum Result {
+export enum Result {
   NULL,
   WIN,
   LOSE,

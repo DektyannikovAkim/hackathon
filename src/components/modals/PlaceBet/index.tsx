@@ -1,10 +1,15 @@
 import React from "react";
 import { Input } from "../../shared/Forms/Input";
-import { ModalPanel, ModalProps } from "../../shared/ModalPanel";
+import { ModalPanel } from "../../shared/ModalPanel";
 import { AddButton, InfoString, ViewButtton } from "../../shared/shared";
 import * as styles from "./style";
 
-export const PlaceBet = ({ show, close }: ModalProps) => {
+export interface PanelProps {
+  show: boolean;
+  close: (bool: boolean) => void;
+}
+
+export const PlaceBet = ({ show, close }: PanelProps) => {
   return (
     <ModalPanel label="Bet" show={show} close={close}>
       <styles.PlaceForm>

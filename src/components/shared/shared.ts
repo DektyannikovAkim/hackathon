@@ -30,9 +30,9 @@ export const ViewButtton = styled(BaseButton)`
 export const PanelContainer = styled.div`
   position: relative;
   width: 100%;
-  border-radius: ${({ theme }) => theme.radii["4px"]};
-  box-shadow: ${({ theme }) => theme.shadows.dashboard};
-  background: ${({ theme }) => theme.bgSettingsPnl};
+  border-radius: 4px;
+  box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.1);
+  background: #fff;
 `;
 
 export const Container = styled.div`
@@ -48,7 +48,7 @@ export const PanelTitle = styled.h5`
   font-weight: 700;
   font-size: 16px;
   margin: 0px;
-  color: ${({ theme }) => theme.bigHeader};
+  color: #1f2041;
 `;
 
 export const ModalBackground = styled.div`

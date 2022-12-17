@@ -1,48 +1,62 @@
 import React, { useMemo } from "react";
-import { BetInfo } from "../../modules";
-import BetStore from "../../state/betState";
+import { observer } from "mobx-react-lite";
+import { MatchContext } from "../../context/match";
+import { Match } from "../../modules";
+import MatchStore from "../../state/MatchState";
 import { MatchItem } from "./MatchItem";
 import * as styles from "./style";
+import { MatchInfo } from "./MatchInfo";
 
-const MATCHES: BetInfo[] = [
+const MATCHES: Match[] = [
   {
-    matchId: "Fulham U18 vs Rochdale U18",
+    team0: "Barselona",
+    team1: "Argentina",
     result: 0,
-    rate: 123,
-    amount: 123,
-    claimed: false,
+    finishTimestamp: 0,
+    poolWin: 10,
+    poolLose: 25,
+    poolTie: 55,
   },
   {
-    matchId: "Argeş vs Mioveni",
-    result: 1,
-    rate: 123,
-    amount: 123,
-    claimed: false,
+    team0: "Frebch",
+    team1: "Germany",
+    result: 0,
+    finishTimestamp: 0,
+    poolWin: 10,
+    poolLose: 25,
+    poolTie: 55,
   },
   {
-    matchId: "Liverpool Feds W vs West Bromwich Albion W",
-    result: 1,
-    rate: 123,
-    amount: 123,
-    claimed: false,
+    team0: "Russia",
+    team1: "Poland",
+    result: 2,
+    finishTimestamp: 0,
+    poolWin: 10,
+    poolLose: 25,
+    poolTie: 55,
   },
   {
-    matchId: "Burnley W vs Norwich City W",
+    team0: "China",
+    team1: "Japan",
     result: 1,
-    rate: 123,
-    amount: 123,
-    claimed: false,
+    finishTimestamp: 0,
+    poolWin: 10,
+    poolLose: 25,
+    poolTie: 55,
   },
 ];
 
-export const Content = () => {
-  const state = useMemo(() => new BetStore(), []);
+export const Content = observer(() => {
+  const state = useMemo(() => new MatchStore(), []);
 
   return (
-    <styles.Container>
-      {MATCHES.map((el, index) => (
-        <MatchItem key={index + el.matchId} data={el} />
-      ))}
-    </styles.Container>
+    <MatchContext.Provider value={state}>
+      <styles.Container>
+        {MATCHES.map((el, index) => (
+          <MatchItem key={index} data={el} />
+        ))}
+      </styles.Container>
+      <MatchInfo show={state.openedMatch} close={state.openModal} />
+    </MatchContext.Provider>
   );
-};
+});

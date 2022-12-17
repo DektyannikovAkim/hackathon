@@ -3,9 +3,9 @@ import * as styles from "./style";
 
 export interface ModalProps {
   label: string;
-  children: JSX.Element | JSX.Element[];
   show: boolean;
   close: (bool: boolean) => void;
+  children?: JSX.Element | JSX.Element[];
   style?: React.CSSProperties;
 }
 

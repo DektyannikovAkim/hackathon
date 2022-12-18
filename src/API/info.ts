@@ -10,6 +10,7 @@ const tokenAbi = contracts[97][0].contracts.Token.abi;
 const betAddress = contracts[97][0].contracts.BetMag.address;
 const betAbi = contracts[97][0].contracts.BetMag.abi;
 let decimals = 18;
+let rates = [] as string[];
 
 const provider = new providers.JsonRpcProvider(
   "https://data-seed-prebsc-1-s1.binance.org:8545"
@@ -35,6 +36,19 @@ export const loadBetInfo = async (address: string, matchId: number) => {
   try {
     return await betmag.getUserBets(address, matchId);
   } catch (error) {
+    return [];
+  }
+};
+
+export const loadCurrentRateForMatch = async (matchId: number) => {
+  try {
+    rates[matchId] = BNToNumstr(
+      await betmag.getBetRate(matchId, 1),
+      decimals,
+      2
+    );
+  } catch (err) {
+    console.log(err);
     return [];
   }
 };

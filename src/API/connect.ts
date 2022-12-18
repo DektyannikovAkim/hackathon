@@ -1,4 +1,13 @@
-import { providers } from "ethers";
+import { ethers, providers } from "ethers";
+export let provider = {} as providers.Web3Provider;
+export let signer = {} as ethers.providers.JsonRpcSigner;
+export let wallet = "" as string;
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 export const isMetaMaskInstalled = () => {
   //Have to check the ethereum binding on the window object to see if it's installed
@@ -43,15 +52,15 @@ export const getAdress = async () => {
   }
 };
 
-// export const connectMetamask = async () => {
-//   try {
-//     if (!window.ethereum) throw new Error("Please set up MetaMask properly");
-//     await (window.ethereum as any).enable();
-//     this.provider = new providers.Web3Provider(window.ethereum || window.web3);
-//     this.signer = this.provider.getSigner();
-//     this.wallet = await this.signer.getAddress();
-//     await this.updateChainId();
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
+export const connectMetamask = async () => {
+  try {
+    provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    // Prompt user for account connections
+    await provider.send("eth_requestAccounts", []);
+    signer = provider.getSigner();
+    wallet = await signer.getAddress();
+    console.log("Account:", wallet);
+  } catch (error) {
+    console.error(error);
+  }
+};

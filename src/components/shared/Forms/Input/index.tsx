@@ -19,7 +19,7 @@ export const Input = ({ label, error = false, ...props }: InputProps) => {
       ) : (
         <></>
       )}
-      <styles.Input error={error} {...props} />
+      <styles.Input id={id} error={error} {...props} />
     </styles.InputWrapper>
   );
 };

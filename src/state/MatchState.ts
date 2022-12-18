@@ -6,6 +6,8 @@ class MatchStore {
 
   openedMatch: boolean = false;
 
+  openedBet: boolean = false;
+
   matches: Match[] = [];
 
   constructor() {
@@ -14,6 +16,10 @@ class MatchStore {
 
   openModal = (bool: boolean) => {
     this.openedMatch = bool;
+  };
+
+  openBet = (bool: boolean) => {
+    this.openedBet = bool;
   };
 
   setCurrentMatch = (data: Match) => {

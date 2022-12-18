@@ -1,11 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { ModalPanel } from "../../shared/ModalPanel";
-import { PanelProps } from "../../modals/PlaceBet";
+import { PanelProps, PlaceBet } from "../../modals/PlaceBet";
 import * as styles from "./style";
 import { useLateInitContext } from "../../../hooks/useLateInitContext";
 import { MatchContext } from "../../../context/match";
 import { getStatusMatch, getTime } from "../../../helpers/utils";
+import { AddButton } from "../../shared/shared";
+import { Bets } from "./Bets";
 
 export const MatchInfo = observer(({ show, close }: PanelProps) => {
   const state = useLateInitContext(MatchContext);
@@ -37,7 +39,18 @@ export const MatchInfo = observer(({ show, close }: PanelProps) => {
         )}
         <styles.Row></styles.Row>
         <styles.Row></styles.Row>
+
+        <Bets />
+
+        {!state.currentMatch?.result ? (
+          <AddButton onClick={() => state.openBet(true)}>
+            place a bet +
+          </AddButton>
+        ) : (
+          <></>
+        )}
       </styles.Content>
+      <PlaceBet show={state.openedBet} close={state.openBet} />
     </ModalPanel>
   );
 });

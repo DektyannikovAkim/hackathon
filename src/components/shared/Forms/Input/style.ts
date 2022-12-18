@@ -8,12 +8,17 @@ export const InputWrapper = styled.div`
   position: relative;
 
   display: flex;
+  flex-direction: column;
   align-items: center;
 
   white-space: nowrap;
 `;
 
 export const Label = styled.label<StyledLabelProps>`
+  width: 100%;
+
+  text-align: left;
+
   cursor: pointer;
 
   color: #1f2041;

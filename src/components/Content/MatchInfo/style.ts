@@ -6,7 +6,7 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
 
-  & > div:not(:last-of-type) {
+  & > div {
     margin-bottom: 5px;
   }
 `;

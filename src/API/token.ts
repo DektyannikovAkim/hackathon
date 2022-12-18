@@ -5,7 +5,7 @@ import { BNToNumstr } from "./decimals";
 
 const tokenAddress = contracts[97][0].contracts.Token.address;
 const tokenAbi = contracts[97][0].contracts.Token.abi;
-let decimals = 18;
+export let decimals = 18;
 
 const provider = new providers.JsonRpcProvider(
   "https://data-seed-prebsc-1-s1.binance.org:8545"

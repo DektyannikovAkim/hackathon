@@ -5,7 +5,7 @@
       "chainId": "97",
       "contracts": {
         "BetMag": {
-          "address": "0x433ac03903B7476b4150f8F0055259D61Ce70382",
+          "address": "0xcd391872bC99A3522Fc1Aa1e2dF5d77942911bC1",
           "abi": [
             {
               "inputs": [
@@ -28,6 +28,11 @@
                   "internalType": "uint256",
                   "name": "betsAmountEdge_",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "oracle_",
+                  "type": "address"
                 }
               ],
               "stateMutability": "nonpayable",
@@ -57,9 +62,9 @@
                 {
                   "components": [
                     {
-                      "internalType": "uint256",
+                      "internalType": "string",
                       "name": "id",
-                      "type": "uint256"
+                      "type": "string"
                     },
                     {
                       "internalType": "string",
@@ -115,9 +120,9 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
+                  "internalType": "string",
                   "name": "matchId_",
-                  "type": "uint256"
+                  "type": "string"
                 },
                 {
                   "internalType": "enum BetMag.Result",
@@ -151,9 +156,9 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
+                  "internalType": "string",
                   "name": "matchId_",
-                  "type": "uint256"
+                  "type": "string"
                 }
               ],
               "name": "claim",
@@ -181,9 +186,9 @@
                 {
                   "components": [
                     {
-                      "internalType": "uint256",
+                      "internalType": "string",
                       "name": "id",
-                      "type": "uint256"
+                      "type": "string"
                     },
                     {
                       "internalType": "string",
@@ -237,9 +242,9 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
+                  "internalType": "string",
                   "name": "matchId_",
-                  "type": "uint256"
+                  "type": "string"
                 },
                 {
                   "internalType": "enum BetMag.Result",
@@ -266,9 +271,9 @@
                   "type": "address"
                 },
                 {
-                  "internalType": "uint256",
+                  "internalType": "string",
                   "name": "matchId_",
-                  "type": "uint256"
+                  "type": "string"
                 }
               ],
               "name": "getUserBets",
@@ -276,9 +281,9 @@
                 {
                   "components": [
                     {
-                      "internalType": "uint256",
+                      "internalType": "string",
                       "name": "matchId",
-                      "type": "uint256"
+                      "type": "string"
                     },
                     {
                       "internalType": "enum BetMag.Result",
@@ -320,12 +325,30 @@
               "name": "getUserBetsMatches",
               "outputs": [
                 {
-                  "internalType": "uint256[]",
+                  "internalType": "string[]",
                   "name": "",
-                  "type": "uint256[]"
+                  "type": "string[]"
                 }
               ],
               "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string[]",
+                  "name": "matchIds_",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "enum BetMag.Result[]",
+                  "name": "results_",
+                  "type": "uint8[]"
+                }
+              ],
+              "name": "loadResults",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -370,6 +393,19 @@
                 }
               ],
               "name": "setFeeWallet",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOracle",
+                  "type": "address"
+                }
+              ],
+              "name": "setOracle",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"

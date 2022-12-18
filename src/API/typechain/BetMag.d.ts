@@ -22,26 +22,30 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface BetMagInterface extends ethers.utils.Interface {
   functions: {
     "addMatches(tuple[])": FunctionFragment;
-    "bet(uint256,uint8,uint256)": FunctionFragment;
+    "bet(string,uint8,uint256)": FunctionFragment;
     "betFee()": FunctionFragment;
-    "claim(uint256)": FunctionFragment;
+    "claim(string)": FunctionFragment;
     "feeWallet()": FunctionFragment;
     "getAllMatches()": FunctionFragment;
-    "getBetRate(uint256,uint8)": FunctionFragment;
-    "getUserBets(address,uint256)": FunctionFragment;
+    "getBetRate(string,uint8)": FunctionFragment;
+    "getUserBets(address,string)": FunctionFragment;
     "getUserBetsMatches(address)": FunctionFragment;
+    "loadResults(string[],uint8[])": FunctionFragment;
     "matchesCounter()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setFeeWallet(address)": FunctionFragment;
+    "setOracle(address)": FunctionFragment;
     "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdrawStables(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "addMatches",
     values: [
       {
+        id: string;
         team0: string;
         team1: string;
         result: BigNumberish;
@@ -49,15 +53,16 @@ interface BetMagInterface extends ethers.utils.Interface {
         poolWin: BigNumberish;
         poolLose: BigNumberish;
         poolTie: BigNumberish;
+        maxBet: BigNumberish;
       }[]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "bet",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "betFee", values?: undefined): string;
-  encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "claim", values: [string]): string;
   encodeFunctionData(functionFragment: "feeWallet", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getAllMatches",
@@ -65,15 +70,19 @@ interface BetMagInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBetRate",
-    values: [BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserBets",
-    values: [string, BigNumberish]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserBetsMatches",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "loadResults",
+    values: [string[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "matchesCounter",
@@ -88,10 +97,15 @@ interface BetMagInterface extends ethers.utils.Interface {
     functionFragment: "setFeeWallet",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "setOracle", values: [string]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawStables",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "addMatches", data: BytesLike): Result;
@@ -113,6 +127,10 @@ interface BetMagInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "loadResults",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "matchesCounter",
     data: BytesLike
   ): Result;
@@ -125,9 +143,14 @@ interface BetMagInterface extends ethers.utils.Interface {
     functionFragment: "setFeeWallet",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setOracle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawStables",
     data: BytesLike
   ): Result;
 
@@ -188,6 +211,7 @@ export class BetMag extends BaseContract {
   functions: {
     addMatches(
       matches_: {
+        id: string;
         team0: string;
         team1: string;
         result: BigNumberish;
@@ -195,12 +219,13 @@ export class BetMag extends BaseContract {
         poolWin: BigNumberish;
         poolLose: BigNumberish;
         poolTie: BigNumberish;
+        maxBet: BigNumberish;
       }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     bet(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -209,7 +234,7 @@ export class BetMag extends BaseContract {
     betFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     claim(
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -222,12 +247,15 @@ export class BetMag extends BaseContract {
         ([
           string,
           string,
+          string,
           number,
+          BigNumber,
           BigNumber,
           BigNumber,
           BigNumber,
           BigNumber
         ] & {
+          id: string;
           team0: string;
           team1: string;
           result: number;
@@ -235,24 +263,25 @@ export class BetMag extends BaseContract {
           poolWin: BigNumber;
           poolLose: BigNumber;
           poolTie: BigNumber;
+          maxBet: BigNumber;
         })[]
       ]
     >;
 
     getBetRate(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getUserBets(
       user: string,
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: CallOverrides
     ): Promise<
       [
-        ([BigNumber, number, BigNumber, BigNumber, boolean] & {
-          matchId: BigNumber;
+        ([string, number, BigNumber, BigNumber, boolean] & {
+          matchId: string;
           result: number;
           rate: BigNumber;
           amount: BigNumber;
@@ -264,7 +293,13 @@ export class BetMag extends BaseContract {
     getUserBetsMatches(
       user: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+    ): Promise<[string[]]>;
+
+    loadResults(
+      matchIds_: string[],
+      results_: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     matchesCounter(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -279,16 +314,27 @@ export class BetMag extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setOracle(
+      newOracle: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     token(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawStables(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   addMatches(
     matches_: {
+      id: string;
       team0: string;
       team1: string;
       result: BigNumberish;
@@ -296,12 +342,13 @@ export class BetMag extends BaseContract {
       poolWin: BigNumberish;
       poolLose: BigNumberish;
       poolTie: BigNumberish;
+      maxBet: BigNumberish;
     }[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   bet(
-    matchId_: BigNumberish,
+    matchId_: string,
     result_: BigNumberish,
     amount_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -310,7 +357,7 @@ export class BetMag extends BaseContract {
   betFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   claim(
-    matchId_: BigNumberish,
+    matchId_: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -319,7 +366,18 @@ export class BetMag extends BaseContract {
   getAllMatches(
     overrides?: CallOverrides
   ): Promise<
-    ([string, string, number, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    ([
+      string,
+      string,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      id: string;
       team0: string;
       team1: string;
       result: number;
@@ -327,22 +385,23 @@ export class BetMag extends BaseContract {
       poolWin: BigNumber;
       poolLose: BigNumber;
       poolTie: BigNumber;
+      maxBet: BigNumber;
     })[]
   >;
 
   getBetRate(
-    matchId_: BigNumberish,
+    matchId_: string,
     result_: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getUserBets(
     user: string,
-    matchId_: BigNumberish,
+    matchId_: string,
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, number, BigNumber, BigNumber, boolean] & {
-      matchId: BigNumber;
+    ([string, number, BigNumber, BigNumber, boolean] & {
+      matchId: string;
       result: number;
       rate: BigNumber;
       amount: BigNumber;
@@ -353,7 +412,13 @@ export class BetMag extends BaseContract {
   getUserBetsMatches(
     user: string,
     overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  ): Promise<string[]>;
+
+  loadResults(
+    matchIds_: string[],
+    results_: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   matchesCounter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -368,6 +433,11 @@ export class BetMag extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setOracle(
+    newOracle: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   token(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -375,9 +445,15 @@ export class BetMag extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawStables(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     addMatches(
       matches_: {
+        id: string;
         team0: string;
         team1: string;
         result: BigNumberish;
@@ -385,12 +461,13 @@ export class BetMag extends BaseContract {
         poolWin: BigNumberish;
         poolLose: BigNumberish;
         poolTie: BigNumberish;
+        maxBet: BigNumberish;
       }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     bet(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       amount_: BigNumberish,
       overrides?: CallOverrides
@@ -398,14 +475,25 @@ export class BetMag extends BaseContract {
 
     betFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    claim(matchId_: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    claim(matchId_: string, overrides?: CallOverrides): Promise<void>;
 
     feeWallet(overrides?: CallOverrides): Promise<string>;
 
     getAllMatches(
       overrides?: CallOverrides
     ): Promise<
-      ([string, string, number, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      ([
+        string,
+        string,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        id: string;
         team0: string;
         team1: string;
         result: number;
@@ -413,22 +501,23 @@ export class BetMag extends BaseContract {
         poolWin: BigNumber;
         poolLose: BigNumber;
         poolTie: BigNumber;
+        maxBet: BigNumber;
       })[]
     >;
 
     getBetRate(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserBets(
       user: string,
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, number, BigNumber, BigNumber, boolean] & {
-        matchId: BigNumber;
+      ([string, number, BigNumber, BigNumber, boolean] & {
+        matchId: string;
         result: number;
         rate: BigNumber;
         amount: BigNumber;
@@ -439,7 +528,13 @@ export class BetMag extends BaseContract {
     getUserBetsMatches(
       user: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<string[]>;
+
+    loadResults(
+      matchIds_: string[],
+      results_: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     matchesCounter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -452,10 +547,17 @@ export class BetMag extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setOracle(newOracle: string, overrides?: CallOverrides): Promise<void>;
+
     token(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawStables(
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -481,6 +583,7 @@ export class BetMag extends BaseContract {
   estimateGas: {
     addMatches(
       matches_: {
+        id: string;
         team0: string;
         team1: string;
         result: BigNumberish;
@@ -488,12 +591,13 @@ export class BetMag extends BaseContract {
         poolWin: BigNumberish;
         poolLose: BigNumberish;
         poolTie: BigNumberish;
+        maxBet: BigNumberish;
       }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     bet(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -502,7 +606,7 @@ export class BetMag extends BaseContract {
     betFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     claim(
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -511,20 +615,26 @@ export class BetMag extends BaseContract {
     getAllMatches(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBetRate(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserBets(
       user: string,
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserBetsMatches(
       user: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    loadResults(
+      matchIds_: string[],
+      results_: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     matchesCounter(overrides?: CallOverrides): Promise<BigNumber>;
@@ -540,10 +650,20 @@ export class BetMag extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setOracle(
+      newOracle: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    withdrawStables(
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -551,6 +671,7 @@ export class BetMag extends BaseContract {
   populateTransaction: {
     addMatches(
       matches_: {
+        id: string;
         team0: string;
         team1: string;
         result: BigNumberish;
@@ -558,12 +679,13 @@ export class BetMag extends BaseContract {
         poolWin: BigNumberish;
         poolLose: BigNumberish;
         poolTie: BigNumberish;
+        maxBet: BigNumberish;
       }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     bet(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -572,7 +694,7 @@ export class BetMag extends BaseContract {
     betFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     claim(
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -581,20 +703,26 @@ export class BetMag extends BaseContract {
     getAllMatches(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBetRate(
-      matchId_: BigNumberish,
+      matchId_: string,
       result_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserBets(
       user: string,
-      matchId_: BigNumberish,
+      matchId_: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserBetsMatches(
       user: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    loadResults(
+      matchIds_: string[],
+      results_: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     matchesCounter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -610,10 +738,20 @@ export class BetMag extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setOracle(
+      newOracle: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawStables(
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

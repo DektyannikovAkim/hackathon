@@ -7,8 +7,8 @@ import { BNToNumstr } from "./decimals";
 
 const tokenAddress = contracts[97][0].contracts.Token.address;
 const tokenAbi = contracts[97][0].contracts.Token.abi;
-const betAddress = contracts[97][0].contracts.Token.address;
-const betAbi = contracts[97][0].contracts.Token.abi;
+const betAddress = contracts[97][0].contracts.BetMag.address;
+const betAbi = contracts[97][0].contracts.BetMag.abi;
 let decimals = 18;
 
 const provider = new providers.JsonRpcProvider(
@@ -21,14 +21,20 @@ const betmag = new ethers.Contract(betAddress, betAbi, provider) as BetMag;
 let matches = [] as Match[];
 let info = [] as BetInfo[];
 
-async function loadMatches() {
+export const loadMatches = async () => {
   try {
-    matches = await betmag.getAllMatches();
+    const data = await betmag.getAllMatches();
+    return data;
   } catch (err) {
     console.log(err);
+    return [];
   }
-}
+};
 
-async function loadBetInfo(address: string, matchId: number) {
-  info = await betmag.getUserBets(address, matchId);
-}
+export const loadBetInfo = async (address: string, matchId: number) => {
+  try {
+    return await betmag.getUserBets(address, matchId);
+  } catch (error) {
+    return [];
+  }
+};

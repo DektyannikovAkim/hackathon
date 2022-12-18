@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { MatchContext } from "../../context/match";
 import { Match } from "../../modules";
@@ -48,6 +48,10 @@ const MATCHES: Match[] = [
 
 export const Content = observer(() => {
   const state = useMemo(() => new MatchStore(), []);
+
+  useEffect(() => {
+    state.getMatches();
+  }, [state]);
 
   return (
     <MatchContext.Provider value={state}>

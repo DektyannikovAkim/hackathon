@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { loadMatches } from "../API/info";
 import { Match } from "../modules";
 
 class MatchStore {
@@ -24,6 +25,15 @@ class MatchStore {
 
   setCurrentMatch = (data: Match) => {
     runInAction(() => (this.currentMatch = data));
+  };
+
+  getMatches = async () => {
+    try {
+      const data = await loadMatches();
+      console.log("matches", data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 

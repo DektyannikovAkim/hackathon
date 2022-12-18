@@ -1,15 +1,16 @@
 import { Match, BetInfo } from "./../modules/index";
 
-import { ethers, providers } from "ethers";
+import { BigNumber, ethers, providers } from "ethers";
 import { Token, BetMag } from "./typechain";
 import contracts from "./contracts.json";
 import { BNToNumstr } from "./decimals";
+import { decimals } from "./token";
+import { signer } from "./connect";
 
 const tokenAddress = contracts[97][0].contracts.Token.address;
 const tokenAbi = contracts[97][0].contracts.Token.abi;
 const betAddress = contracts[97][0].contracts.BetMag.address;
 const betAbi = contracts[97][0].contracts.BetMag.abi;
-let decimals = 18;
 let rates = [] as string[];
 
 const provider = new providers.JsonRpcProvider(
@@ -50,5 +51,29 @@ export const loadCurrentRateForMatch = async (matchId: number) => {
   } catch (err) {
     console.log(err);
     return [];
+  }
+};
+
+export const bet = async (
+  matchId: number,
+  amount: string,
+  result: 0 | 1 | 2 | 3
+) => {
+  try {
+    let tx = await betmag
+      .connect(signer)
+      .bet(matchId, result, BigNumber.from(amount).mul(decimals));
+    await tx.wait();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const claim = async (matchId: number) => {
+  try {
+    let tx = await betmag.connect(signer).claim(matchId);
+    await tx.wait();
+  } catch (err) {
+    console.log(err);
   }
 };

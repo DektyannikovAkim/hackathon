@@ -50,7 +50,7 @@ export const Content = observer(() => {
   const state = useMemo(() => new MatchStore(), []);
 
   useEffect(() => {
-    state.getMatches();
+    state.loadData();
   }, [state]);
 
   return (

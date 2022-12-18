@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 export interface Match {
   team0: string;
   team1: string;
@@ -9,10 +11,10 @@ export interface Match {
 }
 
 export interface BetInfo {
-  matchId: string;
+  matchId: BigNumber;
   result: Result;
-  rate: number;
-  amount: number;
+  rate: BigNumber;
+  amount: BigNumber;
   claimed: boolean;
 }
 

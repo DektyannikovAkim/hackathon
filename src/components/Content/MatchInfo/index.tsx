@@ -40,7 +40,7 @@ export const MatchInfo = observer(({ show, close }: PanelProps) => {
         <styles.Row></styles.Row>
         <styles.Row></styles.Row>
 
-        <Bets />
+        <Bets id={state.currentMatch.id} />
 
         {!state.currentMatch?.result ? (
           <AddButton onClick={() => state.openBet(true)}>
